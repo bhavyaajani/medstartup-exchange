@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MedStartup Exchange MVP</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --ink: #172033;
+      --muted: #627084;
+      --line: #dde5ef;
+      --primary: #0f766e;
+      --primary-dark: #115e59;
+      --soft: #e6fffb;
+      --danger: #b42318;
+      --warning: #b54708;
+      --success: #067647;
+      --shadow: 0 12px 28px rgba(23, 32, 51, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at top left, #e6fffb 0, transparent 34rem), var(--bg);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .app-shell { min-height: 100vh; display: flex; flex-direction: column; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: -0.02em; }
+    .logo {
+      width: 38px; height: 38px; border-radius: 12px;
+      background: linear-gradient(135deg, #0f766e, #14b8a6);
+      display: grid; place-items: center; color: white; font-weight: 900;
+      box-shadow: 0 10px 18px rgba(15,118,110,0.25);
+    }
+
+    .nav-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .nav-actions button, .btn {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 650;
+      transition: 0.18s ease;
+    }
+    .nav-actions button:hover, .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(23,32,51,0.08); }
+    .btn.primary, button.primary { background: var(--primary); color: white; border-color: var(--primary); }
+    .btn.primary:hover, button.primary:hover { background: var(--primary-dark); }
+    .btn.ghost { background: transparent; }
+    .btn.danger { color: var(--danger); border-color: #f3b6ad; background: #fff7f5; }
+    .btn.small { padding: 7px 10px; font-size: 0.88rem; }
+
+    main { flex: 1; }
+    .container { max-width: 1180px; margin: 0 auto; padding: 28px 20px 56px; }
+    .hidden { display: none !important; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      align-items: stretch;
+      padding: 36px 0 22px;
+    }
+    .hero-card, .panel, .card {
+      background: rgba(255,255,255,0.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .hero-card { padding: 38px; }
+    .eyebrow { color: var(--primary); font-weight: 800; text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.09em; }
+    h1 { font-size: clamp(2.1rem, 4vw, 4.2rem); line-height: 1.02; margin: 12px 0 18px; letter-spacing: -0.055em; }
+    h2 { font-size: clamp(1.55rem, 2.5vw, 2.2rem); letter-spacing: -0.035em; margin: 0 0 14px; }
+    h3 { margin: 0 0 8px; letter-spacing: -0.02em; }
+    p { color: var(--muted); line-height: 1.6; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 22px; }
+
+    .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 26px; }
+    .stat { padding: 16px; border-radius: 16px; background: #f8fafc; border: 1px solid var(--line); }
+    .stat strong { display: block; font-size: 1.4rem; }
+    .stat span { color: var(--muted); font-size: 0.9rem; }
+
+    .side-card { padding: 22px; display: flex; flex-direction: column; justify-content: space-between; }
+    .safety-box { background: #fff8eb; border: 1px solid #fedf89; padding: 16px; border-radius: 16px; color: #7a2e0e; }
+    .safety-box strong { color: #7a2e0e; }
+
+    .feedback-cta {
+      margin-top: 22px;
+      padding: 22px;
+      border-radius: 18px;
+      border: 1px solid #99f6e4;
+      background: linear-gradient(135deg, #ecfdf5, #f0fdfa);
+      box-shadow: 0 12px 26px rgba(15, 118, 110, 0.10);
+    }
+    .feedback-cta h3 { margin-bottom: 6px; }
+    .feedback-cta p { margin-top: 0; }
+    .feedback-cta .btn {
+      display: inline-flex;
+      text-decoration: none;
+      align-items: center;
+      justify-content: center;
+      margin-top: 6px;
+    }
+    .real-support-cta {
+      position: relative;
+      border: 2px solid var(--primary);
+      background: linear-gradient(135deg, #ffffff, #ecfdf5);
+    }
+    .real-support-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #0f766e;
+      color: white;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .steps { display: grid; gap: 12px; margin-top: 18px; }
+    .step { display: flex; gap: 12px; align-items: flex-start; }
+    .step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--soft); color: var(--primary); display:grid; place-items:center; font-weight: 800; flex: 0 0 auto; }
+
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
+    .span-3 { grid-column: span 3; }
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-6 { grid-column: span 6; }
+    .span-7 { grid-column: span 7; }
+    .span-12 { grid-column: span 12; }
+
+    .panel { padding: 22px; }
+    .form-grid { display: grid; gap: 14px; }
+    label { display: grid; gap: 7px; font-weight: 700; color: #29364d; }
+    input, select, textarea {
+      width: 100%; border: 1px solid var(--line); border-radius: 12px;
+      padding: 12px 13px; background: white; color: var(--ink); outline: none;
+    }
+    textarea { min-height: 110px; resize: vertical; }
+    input:focus, select:focus, textarea:focus { border-color: #14b8a6; box-shadow: 0 0 0 4px rgba(20,184,166,0.12); }
+    .inline { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .muted { color: var(--muted); }
+
+    .problem-list { display: grid; gap: 14px; }
+    .problem-card { padding: 18px; }
+    .problem-top { display: flex; justify-content: space-between; gap: 14px; align-items: start; }
+    .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+    .badge { display:inline-flex; align-items:center; gap:6px; border-radius: 999px; background:#f1f5f9; border:1px solid var(--line); color:#334155; padding:5px 9px; font-weight:700; font-size:0.78rem; }
+    .badge.green { background:#ecfdf3; color:#067647; border-color:#abefc6; }
+    .badge.orange { background:#fff8eb; color:#b54708; border-color:#fedf89; }
+    .badge.red { background:#fff1f0; color:#b42318; border-color:#f3b6ad; }
+    .problem-meta { color: var(--muted); font-size: 0.92rem; }
+    .empty { text-align: center; padding: 40px 20px; color: var(--muted); border: 1px dashed #b7c4d6; border-radius: var(--radius); background: rgba(255,255,255,0.6); }
+
+    .thread { display: grid; gap: 12px; margin-top: 12px; }
+    .message { border:1px solid var(--line); border-radius:14px; padding:12px; background:#fbfdff; }
+    .message strong { display:block; margin-bottom:4px; }
+    .toast {
+      position: fixed; right: 18px; bottom: 18px; background: #101828; color: white;
+      padding: 13px 16px; border-radius: 14px; box-shadow: var(--shadow); opacity: 0; transform: translateY(8px);
+      transition: 0.2s ease; z-index: 50; max-width: 360px;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    .prototype-banner {
+      background: #ecfdf3;
+      border-bottom: 1px solid #abefc6;
+      color: #064e3b;
+    }
+    .prototype-banner .container {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+    .prototype-banner strong { color: #064e3b; }
+
+
+    .hero-two-column {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      align-items: stretch;
+      padding: 36px 0 22px;
+    }
+    .right-home-column {
+      display: grid;
+      grid-template-rows: auto auto;
+      gap: 18px;
+    }
+    .info-panel {
+      padding: 22px;
+    }
+    .real-support-cta {
+      padding: 22px;
+      border-radius: 18px;
+      border: 2px solid var(--primary);
+      background: linear-gradient(135deg, #ffffff, #ecfdf5);
+      box-shadow: 0 12px 26px rgba(15, 118, 110, 0.10);
+    }
+    .real-support-label {
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--primary);
+      color: white;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .real-support-cta h3 { margin-bottom: 8px; }
+    .real-support-cta p { margin-top: 0; }
+    .real-support-cta .btn {
+      display: inline-flex;
+      text-decoration: none;
+      align-items: center;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    footer { border-top: 1px solid var(--line); background: rgba(255,255,255,0.7); }
+    footer .container { padding-top: 20px; padding-bottom: 20px; color: var(--muted); font-size: 0.9rem; }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-two-column { grid-template-columns: 1fr; }
+      .span-3, .span-4, .span-5, .span-6, .span-7, .span-8 { grid-column: span 12; }
+      .stat-grid { grid-template-columns: 1fr; }
+      .nav { align-items: flex-start; flex-direction: column; }
+      .nav-actions { justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header>
+      <nav class="nav">
+        <div class="brand" onclick="route('home')" role="button" tabindex="0">
+          <div class="logo">M+</div>
+          <div>
+            <div>MedStartup Exchange</div>
+            <small class="muted">Healthcare problems worth solving</small>
+          </div>
+        </div>
+        <div class="nav-actions" id="navActions"></div>
+      </nav>
+    </header>
+
+    <div id="prototypeBanner" class="prototype-banner">
+      <div class="container">
+        <strong>Demo MVP prototype:</strong> The marketplace screens are a dummy demonstration of what the platform could do. The “Support this initiative” section on the homepage is the real contact area for people who want to help build this open-source, non-profit project.
+      </div>
+    </div>
+
+    <main class="container">
+      <section id="homeView"></section>
+      <section id="authView" class="hidden"></section>
+      <section id="profileView" class="hidden"></section>
+      <section id="postProblemView" class="hidden"></section>
+      <section id="browseView" class="hidden"></section>
+      <section id="startupsView" class="hidden"></section>
+      <section id="linksView" class="hidden"></section>
+      <section id="adminView" class="hidden"></section>
+      <section id="groupsView" class="hidden"></section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <strong>Safety disclaimer:</strong> This MVP is for healthcare innovation collaboration only. Do not post patient-identifiable information. It does not provide medical advice, diagnosis, treatment, or regulated healthcare services.
+      </div>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const STORAGE_KEY = 'medstartup_exchange_mvp_v1';
+
+    const seedData = {
+      currentUserId: null,
+      users: [
+        { id: 'u_admin', name: 'Admin User', email: 'admin@example.com', role: 'admin', organization: 'MedStartup Exchange', specialty: 'Platform moderation', bio: 'Reviews submitted problem statements and keeps the community safe.' },
+        { id: 'u_health_1', name: 'Dr. Asha Raman', email: 'asha@example.com', role: 'healthcare', organization: 'Community Clinic', specialty: 'Primary care', bio: 'Interested in solving access, workflow, and patient follow-up challenges.' },
+        { id: 'u_startup_1', name: 'Leo Chen', email: 'leo@example.com', role: 'startup', organization: 'CareFlow Labs', specialty: 'AI workflow tools', bio: 'Building lightweight healthcare operations software with clinical partners.' },
+        { id: 'u_startup_2', name: 'Maya Iyer', email: 'maya@example.com', role: 'startup', organization: 'RuralReach Health', specialty: 'Rural care coordination', bio: 'Working on low-bandwidth referral tracking and follow-up workflows for rural clinics.' },
+        { id: 'u_startup_3', name: 'Arjun Mehta', email: 'arjun@example.com', role: 'startup', organization: 'ClaimSwift AI', specialty: 'Insurance and claims automation', bio: 'Exploring AI-assisted prior authorization, claims documentation, and hospital billing operations.' }
+      ],
+      startupProfiles: [
+        {
+          id: 's_1', userId: 'u_startup_1', name: 'CareFlow Labs', focus: 'Clinical workflow', stage: 'Prototype',
+          location: 'Bengaluru / Remote', lookingFor: 'Clinicians, hospital operations leaders, EHR workflow experts',
+          description: 'Building lightweight care coordination tools for follow-up tracking, handoffs, and task management.',
+          tags: ['AI workflow', 'Care coordination', 'Clinics', 'Patient safety']
+        },
+        {
+          id: 's_2', userId: 'u_startup_2', name: 'RuralReach Health', focus: 'Rural healthcare', stage: 'Idea validation',
+          location: 'India / Rural health', lookingFor: 'Public health teams, rural clinics, NGOs, referral hospitals',
+          description: 'Exploring referral tracking, multilingual patient reminders, and low-bandwidth communication workflows.',
+          tags: ['Rural health', 'Referrals', 'ABDM', 'Multilingual']
+        },
+        {
+          id: 's_3', userId: 'u_startup_3', name: 'ClaimSwift AI', focus: 'Insurance and administration', stage: 'Early MVP',
+          location: 'Mumbai / Remote', lookingFor: 'Hospital billing teams, TPAs, insurance operations experts',
+          description: 'Working on documentation assistance and claims workflow automation for hospitals and clinics.',
+          tags: ['Claims', 'Billing', 'Operations', 'AI']
+        },
+        {
+          id: 's_4', userId: null, name: 'NurseOps Studio', focus: 'Nursing workflow', stage: 'Concept',
+          location: 'Delhi NCR', lookingFor: 'Nurses, ward managers, hospital quality teams',
+          description: 'Interested in shift handoff, escalation, documentation burden, and patient discharge coordination.',
+          tags: ['Nursing', 'Hospital operations', 'Handoffs', 'Discharge']
+        }
+      ],
+      outreach: [],
+      ecosystemLinks: [
+        { name: 'Startup India', url: 'https://www.startupindia.gov.in/', category: 'Startup ecosystem', description: 'Government of India platform for startup recognition, programs, learning, networking, and ecosystem support.' },
+        { name: 'BIRAC', url: 'https://birac.nic.in/', category: 'Biotech and health innovation', description: 'Biotechnology Industry Research Assistance Council; supports biotech, medtech, diagnostics, and life-science innovation.' },
+        { name: 'Atal Innovation Mission', url: 'https://aim.gov.in/', category: 'Innovation and incubation', description: 'Government initiative supporting innovation, entrepreneurship, incubation, and problem-solving programs.' },
+        { name: 'Ayushman Bharat Digital Mission', url: 'https://abdm.gov.in/', category: 'Digital health infrastructure', description: 'India digital health mission and ecosystem for health IDs, registries, and health information exchange.' },
+        { name: 'National Health Authority', url: 'https://nha.gov.in/', category: 'Public health and digital health', description: 'National Health Authority information on Ayushman Bharat and digital health initiatives.' }
+      ],
+      problems: [
+        {
+          id: 'p_1', ownerId: 'u_health_1', status: 'approved', createdAt: new Date().toISOString(),
+          title: 'Reducing missed follow-up appointments after abnormal lab results',
+          category: 'Patient safety', setting: 'Clinic', specialty: 'Primary care', location: 'Remote / US', stage: 'Validated problem',
+          affected: 'Patients, primary care teams, care coordinators',
+          frequency: 'Several times per week in busy outpatient clinics',
+          why: 'Missed follow-up can delay diagnosis, worsen outcomes, and create avoidable risk for patients and clinics.',
+          current: 'Manual phone calls, EHR reminders, and ad hoc spreadsheets.',
+          help: 'Workflow mapping, patient communication tools, EHR-lite integration, and startup collaborators.',
+          noPhiConfirmed: true
+        }
+      ],
+      interests: [],
+      groups: [],
+      messages: []
+    };
+
+    let db = loadDb();
+    let activeRoute = 'home';
+
+    function loadDb() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(seedData));
+        return structuredClone(seedData);
+      }
+      try { return JSON.parse(raw); }
+      catch { return structuredClone(seedData); }
+    }
+
+    function saveDb() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
+    function currentUser() { return db.users.find(u => u.id === db.currentUserId) || null; }
+    function byId(list, id) { return list.find(x => x.id === id); }
+    function uid(prefix) { return prefix + '_' + Math.random().toString(36).slice(2, 10); }
+    function escapeHtml(str = '') { return String(str).replace(/[&<>\"]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s])); }
+
+    function showToast(message) {
+      const el = document.getElementById('toast');
+      el.textContent = message;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2600);
+    }
+
+    function route(name) {
+      activeRoute = name;
+      for (const id of ['homeView','authView','profileView','postProblemView','browseView','startupsView','linksView','adminView','groupsView']) {
+        document.getElementById(id).classList.add('hidden');
+      }
+      const map = { home:'homeView', auth:'authView', profile:'profileView', post:'postProblemView', browse:'browseView', startups:'startupsView', links:'linksView', admin:'adminView', groups:'groupsView' };
+      document.getElementById(map[name] || 'homeView').classList.remove('hidden');
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function render() {
+      renderNav();
+      renderHome();
+      renderAuth();
+      renderProfile();
+      renderPostProblem();
+      renderBrowse();
+      renderStartups();
+      renderLinks();
+      renderAdmin();
+      renderGroups();
+    }
+
+    function renderNav() {
+      const user = currentUser();
+      const nav = document.getElementById('navActions');
+      if (!user) {
+        nav.innerHTML = `
+          <button onclick="route('browse')">Browse problems</button>
+          <button onclick="route('startups')">Find startups</button>
+          <button onclick="route('links')">Govt links</button>
+          <button class="primary" onclick="route('auth')">Sign up / Log in</button>
+        `;
+        return;
+      }
+      nav.innerHTML = `
+        <button onclick="route('browse')">Browse</button>
+        <button onclick="route('startups')">Find startups</button>
+        <button onclick="route('links')">Govt links</button>
+        ${user.role === 'healthcare' ? '<button onclick="route(\'post\')">Post problem</button>' : ''}
+        ${user.role === 'admin' ? '<button onclick="route(\'admin\')">Admin review</button>' : ''}
+        <button onclick="route('groups')">Groups</button>
+        <button onclick="route('profile')">Profile</button>
+        <button class="btn danger" onclick="logout()">Log out</button>
+      `;
+    }
+
+    function renderHome() {
+      const approved = db.problems.filter(p => p.status === 'approved').length;
+      const groups = db.groups.length;
+      const interests = db.interests.length;
+      document.getElementById('homeView').innerHTML = `
+        <div class="hero-two-column">
+          <div class="hero-card">
+            <div class="eyebrow">Open-source · Non-profit · No-patient-data collaboration marketplace</div>
+            <h1>Where healthcare problems find startup builders.</h1>
+            <p>MedStartup Exchange is an open-source, non-profit MVP for healthcare professionals to share validated problems and for startups, builders, mentors, and students to find meaningful collaboration opportunities.</p>
+            <div class="hero-actions">
+              <button class="btn primary" onclick="route('auth')">Join the MVP</button>
+              <button class="btn" onclick="route('browse')">Browse approved problems</button>
+              <button class="btn" onclick="route('startups')">Find startups</button>
+            </div>
+            <div class="stat-grid">
+              <div class="stat"><strong>${approved}</strong><span>approved problems</span></div>
+              <div class="stat"><strong>${interests}</strong><span>collaboration interests</span></div>
+              <div class="stat"><strong>${groups}</strong><span>active groups</span></div>
+            </div>
+          </div>
+
+          <div class="right-home-column">
+            <aside class="side-card info-panel">
+              <div>
+                <div class="safety-box"><strong>Important:</strong> Do not include patient names, dates of birth, medical record numbers, images, or any identifiable health information.</div>
+                <div class="steps">
+                  <div class="step"><div class="step-num">1</div><div><strong>Healthcare posts problems</strong><br><span class="muted">Structured problem statements are reviewed by admin.</span></div></div>
+                  <div class="step"><div class="step-num">2</div><div><strong>Startups discover needs</strong><br><span class="muted">Search and filter validated problems worth solving.</span></div></div>
+                  <div class="step"><div class="step-num">3</div><div><strong>Groups collaborate</strong><br><span class="muted">Problem owners accept interest and create discussion groups.</span></div></div>
+                </div>
+              </div>
+            </aside>
+
+            <aside class="real-support-cta">
+              <div class="real-support-label">Real contact area</div>
+              <h3>Support this initiative</h3>
+              <p><strong>This section is not dummy demo content.</strong> It is the real place for interested people to reach out if they want to support this initiative.</p>
+              <p>If you are a healthcare professional, startup founder, technologist, mentor, student, incubator, hospital leader, or community builder, please reach out to help validate problems, build the platform, moderate the community, connect partners, or grow this as a public-good project.</p>
+              <a class="btn primary" target="_blank" rel="noopener noreferrer" href="https://forms.gle/4o68UMiP4cje6SYn8">Reach out to support this initiative</a>
+            </aside>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAuth() {
+      document.getElementById('authView').innerHTML = `
+        <div class="grid">
+          <div class="panel span-6">
+            <h2>Create a demo account</h2>
+            <p>For this MVP, accounts are stored in the browser using localStorage. Replace this with a real backend before production use.</p>
+            <form class="form-grid" onsubmit="signup(event)">
+              <label>Name<input required name="name" placeholder="Your name"></label>
+              <label>Email<input required type="email" name="email" placeholder="you@example.com"></label>
+              <label>Role<select required name="role"><option value="healthcare">Healthcare problem owner</option><option value="startup">Startup / solver</option></select></label>
+              <label>Organization<input name="organization" placeholder="Clinic, hospital, startup, university..."></label>
+              <label>Specialty or skill area<input name="specialty" placeholder="Primary care, AI, operations, nursing..."></label>
+              <label>Short bio<textarea name="bio" placeholder="What are you hoping to contribute or learn?"></textarea></label>
+              <button class="primary" type="submit">Create account</button>
+            </form>
+          </div>
+          <div class="panel span-6">
+            <h2>Demo login</h2>
+            <p>Use these built-in users to test the full marketplace flow.</p>
+            <div class="problem-list">
+              ${db.users.map(u => `
+                <div class="card problem-card">
+                  <div class="problem-top">
+                    <div><h3>${escapeHtml(u.name)}</h3><div class="problem-meta">${escapeHtml(u.email)} · ${escapeHtml(u.role)}</div></div>
+                    <button class="btn small primary" onclick="login('${u.id}')">Log in</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function signup(e) {
+      e.preventDefault();
+      const f = new FormData(e.target);
+      const user = {
+        id: uid('u'), name: f.get('name'), email: f.get('email'), role: f.get('role'),
+        organization: f.get('organization'), specialty: f.get('specialty'), bio: f.get('bio')
+      };
+      db.users.push(user); db.currentUserId = user.id; saveDb();
+      showToast('Account created. Welcome to the MVP.');
+      route('profile');
+    }
+
+    function login(id) { db.currentUserId = id; saveDb(); showToast('Logged in.'); route('profile'); }
+    function logout() { db.currentUserId = null; saveDb(); showToast('Logged out.'); route('home'); }
+
+    function renderProfile() {
+      const user = currentUser();
+      if (!user) { document.getElementById('profileView').innerHTML = needLogin(); return; }
+      const owned = db.problems.filter(p => p.ownerId === user.id);
+      const myInterests = db.interests.filter(i => i.userId === user.id);
+      document.getElementById('profileView').innerHTML = `
+        <div class="grid">
+          <div class="panel span-5">
+            <h2>Profile</h2>
+            <form class="form-grid" onsubmit="saveProfile(event)">
+              <label>Name<input required name="name" value="${escapeHtml(user.name)}"></label>
+              <label>Email<input required type="email" name="email" value="${escapeHtml(user.email)}"></label>
+              <label>Role<input disabled value="${escapeHtml(user.role)}"></label>
+              <label>Organization<input name="organization" value="${escapeHtml(user.organization || '')}"></label>
+              <label>Specialty / skills<input name="specialty" value="${escapeHtml(user.specialty || '')}"></label>
+              <label>Bio<textarea name="bio">${escapeHtml(user.bio || '')}</textarea></label>
+              <button class="primary" type="submit">Save profile</button>
+            </form>
+          </div>
+          <div class="panel span-7">
+            <h2>Your activity</h2>
+            <div class="badge-row"><span class="badge green">${owned.length} problems posted</span><span class="badge orange">${myInterests.length} interests sent</span></div>
+            ${user.role === 'healthcare' ? renderOwnedProblemList(owned) : renderInterestList(myInterests)}
+          </div>
+        </div>
+      `;
+    }
+
+    function saveProfile(e) {
+      e.preventDefault(); const user = currentUser(); const f = new FormData(e.target);
+      Object.assign(user, { name:f.get('name'), email:f.get('email'), organization:f.get('organization'), specialty:f.get('specialty'), bio:f.get('bio') });
+      saveDb(); showToast('Profile saved.'); render();
+    }
+
+    function renderPostProblem() {
+      const user = currentUser();
+      if (!user) { document.getElementById('postProblemView').innerHTML = needLogin(); return; }
+      if (user.role !== 'healthcare') { document.getElementById('postProblemView').innerHTML = `<div class="empty">Only healthcare users can post problem statements in this MVP.</div>`; return; }
+      document.getElementById('postProblemView').innerHTML = `
+        <div class="panel">
+          <h2>Post a structured healthcare problem</h2>
+          <p>Describe the problem without patient-identifiable information. Admin approval is required before it appears publicly.</p>
+          <form class="form-grid" onsubmit="postProblem(event)">
+            <label>Problem title<input required name="title" placeholder="Example: Reducing delays in discharge summaries"></label>
+            <div class="grid">
+              <label class="span-4">Category<select name="category"><option>Patient safety</option><option>Clinical workflow</option><option>Operations</option><option>Patient experience</option><option>Research</option><option>Public health</option><option>Administrative</option></select></label>
+              <label class="span-4">Healthcare setting<select name="setting"><option>Hospital</option><option>Clinic</option><option>Home care</option><option>Pharmacy</option><option>Public health</option><option>Research</option><option>Other</option></select></label>
+              <label class="span-4">Problem stage<select name="stage"><option>Early observation</option><option>Validated problem</option><option>Actively seeking solution</option></select></label>
+            </div>
+            <label>Specialty / area<input name="specialty" placeholder="Emergency medicine, oncology, nursing, billing..."></label>
+            <label>Location<input name="location" placeholder="City, region, or Remote"></label>
+            <label>Who experiences this problem?<textarea required name="affected"></textarea></label>
+            <label>How often does it happen?<textarea required name="frequency"></textarea></label>
+            <label>Why does it matter?<textarea required name="why"></textarea></label>
+            <label>What is currently being done?<textarea required name="current"></textarea></label>
+            <label>What kind of help are you looking for?<textarea required name="help"></textarea></label>
+            <label class="inline"><input required style="width:auto" type="checkbox" name="noPhiConfirmed"> I confirm this post contains no patient-identifiable information.</label>
+            <button class="primary" type="submit">Submit for admin approval</button>
+          </form>
+        </div>
+      `;
+    }
+
+    function postProblem(e) {
+      e.preventDefault(); const user = currentUser(); const f = new FormData(e.target);
+      db.problems.push({ id: uid('p'), ownerId: user.id, status: 'pending', createdAt: new Date().toISOString(), title:f.get('title'), category:f.get('category'), setting:f.get('setting'), stage:f.get('stage'), specialty:f.get('specialty'), location:f.get('location'), affected:f.get('affected'), frequency:f.get('frequency'), why:f.get('why'), current:f.get('current'), help:f.get('help'), noPhiConfirmed: !!f.get('noPhiConfirmed') });
+      saveDb(); showToast('Problem submitted for admin approval.'); route('profile');
+    }
+
+    function renderBrowse() {
+      const categories = [...new Set(db.problems.map(p => p.category))];
+      const settings = [...new Set(db.problems.map(p => p.setting))];
+      document.getElementById('browseView').innerHTML = `
+        <div class="panel">
+          <div class="problem-top">
+            <div><h2>Browse approved problems</h2><p>Search validated healthcare problems and express interest in collaboration.</p></div>
+            <button class="btn" onclick="resetDemoData()">Reset demo data</button>
+          </div>
+          <div class="grid">
+            <label class="span-6">Search<input id="searchInput" oninput="renderProblemResults()" placeholder="Search title, specialty, need, setting..."></label>
+            <label class="span-3">Category<select id="categoryFilter" onchange="renderProblemResults()"><option value="">All categories</option>${categories.map(c => `<option>${escapeHtml(c)}</option>`).join('')}</select></label>
+            <label class="span-3">Setting<select id="settingFilter" onchange="renderProblemResults()"><option value="">All settings</option>${settings.map(s => `<option>${escapeHtml(s)}</option>`).join('')}</select></label>
+          </div>
+          <div id="problemResults" class="problem-list" style="margin-top:18px"></div>
+        </div>
+      `;
+      renderProblemResults();
+    }
+
+    function renderProblemResults() {
+      const el = document.getElementById('problemResults'); if (!el) return;
+      const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
+      const category = document.getElementById('categoryFilter')?.value || '';
+      const setting = document.getElementById('settingFilter')?.value || '';
+      const approved = db.problems.filter(p => p.status === 'approved')
+        .filter(p => !category || p.category === category)
+        .filter(p => !setting || p.setting === setting)
+        .filter(p => !q || JSON.stringify(p).toLowerCase().includes(q));
+      el.innerHTML = approved.length ? approved.map(renderProblemCard).join('') : `<div class="empty">No approved problems match your search yet.</div>`;
+    }
+
+    function renderProblemCard(p) {
+      const owner = byId(db.users, p.ownerId) || {};
+      const interested = db.interests.filter(i => i.problemId === p.id);
+      const user = currentUser();
+      const already = user && interested.some(i => i.userId === user.id);
+      return `
+        <article class="card problem-card">
+          <div class="problem-top">
+            <div>
+              <h3>${escapeHtml(p.title)}</h3>
+              <div class="problem-meta">Posted by ${escapeHtml(owner.name || 'Healthcare user')} · ${escapeHtml(owner.organization || '')}</div>
+            </div>
+            <span class="badge green">${escapeHtml(p.status)}</span>
+          </div>
+          <div class="badge-row"><span class="badge">${escapeHtml(p.category)}</span><span class="badge">${escapeHtml(p.setting)}</span><span class="badge">${escapeHtml(p.stage)}</span><span class="badge">${escapeHtml(p.specialty || 'General')}</span></div>
+          <p><strong>Who is affected:</strong> ${escapeHtml(p.affected)}</p>
+          <p><strong>Why it matters:</strong> ${escapeHtml(p.why)}</p>
+          <p><strong>Help needed:</strong> ${escapeHtml(p.help)}</p>
+          <div class="inline">
+            <span class="problem-meta">${interested.length} interested collaborator(s)</span>
+            ${user && user.role === 'startup' ? `<button class="btn small primary" ${already ? 'disabled' : ''} onclick="showInterestForm('${p.id}')">${already ? 'Interest sent' : 'Interested in collaborating'}</button>` : ''}
+            ${user && user.id === p.ownerId ? `<button class="btn small" onclick="route('profile')">Manage in profile</button>` : ''}
+          </div>
+          <div id="interestForm_${p.id}" class="hidden" style="margin-top:12px">
+            <form class="form-grid" onsubmit="submitInterest(event, '${p.id}')">
+              <label>Message to problem owner<textarea required name="message" placeholder="Why are you interested, what can you contribute, and would you like a call?"></textarea></label>
+              <button class="primary" type="submit">Send interest</button>
+            </form>
+          </div>
+        </article>
+      `;
+    }
+
+    function showInterestForm(problemId) {
+      const user = currentUser();
+      if (!user) { showToast('Please sign up or log in first.'); route('auth'); return; }
+      document.getElementById('interestForm_' + problemId)?.classList.toggle('hidden');
+    }
+
+    function submitInterest(e, problemId) {
+      e.preventDefault(); const user = currentUser(); const f = new FormData(e.target);
+      db.interests.push({ id: uid('i'), problemId, userId: user.id, status: 'pending', message: f.get('message'), createdAt: new Date().toISOString() });
+      saveDb(); showToast('Interest sent to the healthcare problem owner.'); route('browse');
+    }
+
+
+    function renderStartups() {
+      const focusAreas = [...new Set((db.startupProfiles || []).map(s => s.focus))];
+      document.getElementById('startupsView').innerHTML = `
+        <div class="panel">
+          <div class="problem-top">
+            <div>
+              <h2>Find startups working in your area of interest</h2>
+              <p>This dummy directory shows how healthcare users could discover startups and send collaboration requests.</p>
+            </div>
+            <button class="btn primary" onclick="route('auth')">Join / create profile</button>
+          </div>
+          <div class="safety-box" style="margin: 12px 0 18px"><strong>Prototype note:</strong> These are sample startup profiles for demonstration only. This open-source non-profit initiative needs community help to identify real startups, clinical partners, and mentors.</div>
+          <div class="grid">
+            <label class="span-6">Search startups<input id="startupSearchInput" oninput="renderStartupResults()" placeholder="Search AI, rural health, claims, nursing, workflow..."></label>
+            <label class="span-3">Focus area<select id="startupFocusFilter" onchange="renderStartupResults()"><option value="">All focus areas</option>${focusAreas.map(f => `<option>${escapeHtml(f)}</option>`).join('')}</select></label>
+            <label class="span-3">Stage<select id="startupStageFilter" onchange="renderStartupResults()"><option value="">All stages</option><option>Concept</option><option>Idea validation</option><option>Prototype</option><option>Early MVP</option></select></label>
+          </div>
+          <div id="startupResults" class="problem-list" style="margin-top:18px"></div>
+        </div>
+      `;
+      renderStartupResults();
+    }
+
+    function renderStartupResults() {
+      const el = document.getElementById('startupResults'); if (!el) return;
+      const q = (document.getElementById('startupSearchInput')?.value || '').toLowerCase();
+      const focus = document.getElementById('startupFocusFilter')?.value || '';
+      const stage = document.getElementById('startupStageFilter')?.value || '';
+      const startups = (db.startupProfiles || [])
+        .filter(s => !focus || s.focus === focus)
+        .filter(s => !stage || s.stage === stage)
+        .filter(s => !q || JSON.stringify(s).toLowerCase().includes(q));
+      el.innerHTML = startups.length ? startups.map(renderStartupCard).join('') : `<div class="empty">No startups match your search yet.</div>`;
+    }
+
+    function renderStartupCard(s) {
+      const owner = s.userId ? byId(db.users, s.userId) : null;
+      const user = currentUser();
+      const sent = user && (db.outreach || []).some(o => o.startupId === s.id && o.userId === user.id);
+      return `
+        <article class="card problem-card">
+          <div class="problem-top">
+            <div>
+              <h3>${escapeHtml(s.name)}</h3>
+              <div class="problem-meta">${escapeHtml(s.location)} · ${escapeHtml(s.stage)}</div>
+            </div>
+            <span class="badge green">${escapeHtml(s.focus)}</span>
+          </div>
+          <p>${escapeHtml(s.description)}</p>
+          <p><strong>Looking for:</strong> ${escapeHtml(s.lookingFor)}</p>
+          <div class="badge-row">${(s.tags || []).map(t => `<span class="badge">${escapeHtml(t)}</span>`).join('')}</div>
+          ${owner ? `<p class="problem-meta">Contact person: ${escapeHtml(owner.name)} · ${escapeHtml(owner.email)}</p>` : `<p class="problem-meta">Contact person: not yet connected to a real account.</p>`}
+          <div class="inline">
+            <button class="btn small primary" ${sent ? 'disabled' : ''} onclick="showStartupReachout('${s.id}')">${sent ? 'Reach-out sent' : 'Reach out / collaborate'}</button>
+          </div>
+          <div id="startupReachout_${s.id}" class="hidden" style="margin-top:12px">
+            <form class="form-grid" onsubmit="submitStartupReachout(event, '${s.id}')">
+              <label>Your message<textarea required name="message" placeholder="Share your clinical problem, context, or collaboration idea. Do not include patient-identifiable information."></textarea></label>
+              <button class="primary" type="submit">Send reach-out</button>
+            </form>
+          </div>
+        </article>
+      `;
+    }
+
+    function showStartupReachout(startupId) {
+      const user = currentUser();
+      if (!user) { showToast('Please sign up or log in first.'); route('auth'); return; }
+      document.getElementById('startupReachout_' + startupId)?.classList.toggle('hidden');
+    }
+
+    function submitStartupReachout(e, startupId) {
+      e.preventDefault();
+      const user = currentUser();
+      const f = new FormData(e.target);
+      if (!db.outreach) db.outreach = [];
+      db.outreach.push({ id: uid('o'), startupId, userId: user.id, message: f.get('message'), status: 'sent', createdAt: new Date().toISOString() });
+      saveDb();
+      showToast('Reach-out saved in this demo. In production, this would send an email/introduction.');
+      route('startups');
+    }
+
+    function renderLinks() {
+      const links = db.ecosystemLinks || [];
+      document.getElementById('linksView').innerHTML = `
+        <div class="panel">
+          <h2>Government and ecosystem links</h2>
+          <p>Useful India-focused public resources for startup support, health innovation, and digital health. These external links open in a new tab.</p>
+          <div class="safety-box" style="margin: 12px 0 18px"><strong>Prototype note:</strong> This page is a starting list only. The community can help add incubators, grants, hospital innovation cells, medtech programs, and state-level resources for this non-profit initiative.</div>
+          <div class="problem-list">
+            ${links.map(link => `
+              <article class="card problem-card">
+                <div class="problem-top">
+                  <div>
+                    <h3>${escapeHtml(link.name)}</h3>
+                    <div class="problem-meta">${escapeHtml(link.category)}</div>
+                  </div>
+                  <a class="btn small primary" target="_blank" rel="noopener noreferrer" href="${escapeHtml(link.url)}">Open website</a>
+                </div>
+                <p>${escapeHtml(link.description)}</p>
+                <p class="problem-meta">${escapeHtml(link.url)}</p>
+              </article>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+
+    function renderAdmin() {
+      const user = currentUser();
+      if (!user) { document.getElementById('adminView').innerHTML = needLogin(); return; }
+      if (user.role !== 'admin') { document.getElementById('adminView').innerHTML = `<div class="empty">Only admin users can review pending posts.</div>`; return; }
+      const pending = db.problems.filter(p => p.status === 'pending');
+      document.getElementById('adminView').innerHTML = `
+        <div class="panel">
+          <h2>Admin approval queue</h2>
+          <p>Review posts for relevance, professionalism, and absence of patient-identifiable information.</p>
+          <div class="problem-list">${pending.length ? pending.map(p => renderAdminProblem(p)).join('') : '<div class="empty">No pending problems to review.</div>'}</div>
+        </div>
+      `;
+    }
+
+    function renderAdminProblem(p) {
+      return `
+        <article class="card problem-card">
+          <h3>${escapeHtml(p.title)}</h3>
+          <div class="badge-row"><span class="badge orange">Pending approval</span><span class="badge">${escapeHtml(p.category)}</span><span class="badge">${escapeHtml(p.setting)}</span></div>
+          <p><strong>Why it matters:</strong> ${escapeHtml(p.why)}</p>
+          <p><strong>Current workaround:</strong> ${escapeHtml(p.current)}</p>
+          <p><strong>Help needed:</strong> ${escapeHtml(p.help)}</p>
+          <div class="inline"><button class="btn small primary" onclick="approveProblem('${p.id}')">Approve</button><button class="btn small danger" onclick="rejectProblem('${p.id}')">Reject</button></div>
+        </article>
+      `;
+    }
+
+    function approveProblem(id) { byId(db.problems, id).status = 'approved'; saveDb(); showToast('Problem approved.'); render(); }
+    function rejectProblem(id) { byId(db.problems, id).status = 'rejected'; saveDb(); showToast('Problem rejected.'); render(); }
+
+    function renderOwnedProblemList(owned) {
+      if (!owned.length) return `<div class="empty">You have not posted any problems yet.</div>`;
+      return `<div class="problem-list">${owned.map(p => {
+        const interests = db.interests.filter(i => i.problemId === p.id);
+        return `<div class="card problem-card"><div class="problem-top"><h3>${escapeHtml(p.title)}</h3><span class="badge ${p.status === 'approved' ? 'green' : 'orange'}">${escapeHtml(p.status)}</span></div><p>${escapeHtml(p.why)}</p><h3>Interested collaborators</h3>${interests.length ? interests.map(renderInterestForOwner).join('') : '<p class="muted">No startup interest yet.</p>'}</div>`;
+      }).join('')}</div>`;
+    }
+
+    function renderInterestForOwner(i) {
+      const u = byId(db.users, i.userId) || {};
+      return `<div class="message"><strong>${escapeHtml(u.name || 'Startup user')} · ${escapeHtml(u.organization || '')}</strong><p>${escapeHtml(i.message)}</p><div class="inline"><span class="badge ${i.status === 'accepted' ? 'green' : 'orange'}">${escapeHtml(i.status)}</span>${i.status !== 'accepted' ? `<button class="btn small primary" onclick="acceptInterest('${i.id}')">Accept and connect by email</button>` : ''}</div></div>`;
+    }
+
+    function renderInterestList(items) {
+      if (!items.length) return `<div class="empty">You have not expressed interest in any problems yet.</div>`;
+      return `<div class="problem-list">${items.map(i => {
+        const p = byId(db.problems, i.problemId) || {}; const owner = byId(db.users, p.ownerId) || {};
+        return `<div class="card problem-card"><h3>${escapeHtml(p.title || 'Problem')}</h3><p>${escapeHtml(i.message)}</p><div class="badge-row"><span class="badge ${i.status === 'accepted' ? 'green' : 'orange'}">${escapeHtml(i.status)}</span><span class="badge">Owner: ${escapeHtml(owner.name || '')}</span></div></div>`;
+      }).join('')}</div>`;
+    }
+
+    function acceptInterest(interestId) {
+      const i = byId(db.interests, interestId); if (!i) return;
+      i.status = 'accepted';
+      let group = db.groups.find(g => g.problemId === i.problemId);
+      if (!group) { group = { id: uid('g'), problemId: i.problemId, memberIds: [byId(db.problems, i.problemId).ownerId], createdAt: new Date().toISOString() }; db.groups.push(group); }
+      if (!group.memberIds.includes(i.userId)) group.memberIds.push(i.userId);
+      db.messages.push({ id: uid('m'), groupId: group.id, userId: 'system', body: 'A collaboration interest was accepted. Email introduction should be sent between the problem owner and startup collaborator.', createdAt: new Date().toISOString() });
+      saveDb(); showToast('Interest accepted. A collaboration group was created/updated.'); render();
+    }
+
+    function renderGroups() {
+      const user = currentUser();
+      if (!user) { document.getElementById('groupsView').innerHTML = needLogin(); return; }
+      const groups = user.role === 'admin' ? db.groups : db.groups.filter(g => g.memberIds.includes(user.id));
+      document.getElementById('groupsView').innerHTML = `
+        <div class="panel">
+          <h2>Collaboration groups</h2>
+          <p>Basic discussion spaces for accepted healthcare-startup collaborations.</p>
+          <div class="problem-list">${groups.length ? groups.map(renderGroupCard).join('') : '<div class="empty">No collaboration groups yet. Groups appear after a healthcare problem owner accepts startup interest.</div>'}</div>
+        </div>
+      `;
+    }
+
+    function renderGroupCard(g) {
+      const p = byId(db.problems, g.problemId) || {};
+      const msgs = db.messages.filter(m => m.groupId === g.id);
+      const members = g.memberIds.map(id => byId(db.users, id)).filter(Boolean);
+      return `<article class="card problem-card"><h3>${escapeHtml(p.title || 'Collaboration group')}</h3><div class="badge-row">${members.map(m => `<span class="badge">${escapeHtml(m.name)} · ${escapeHtml(m.role)}</span>`).join('')}</div><p>${escapeHtml(p.help || '')}</p><div class="thread">${msgs.map(m => `<div class="message"><strong>${escapeHtml(byId(db.users, m.userId)?.name || 'System')}</strong>${escapeHtml(m.body)}</div>`).join('')}</div><form class="form-grid" style="margin-top:12px" onsubmit="postMessage(event, '${g.id}')"><label>Add message<textarea required name="body" placeholder="Share a note, question, next step, or meeting link..."></textarea></label><button class="primary" type="submit">Post message</button></form></article>`;
+    }
+
+    function postMessage(e, groupId) {
+      e.preventDefault(); const f = new FormData(e.target); const user = currentUser();
+      db.messages.push({ id: uid('m'), groupId, userId: user.id, body: f.get('body'), createdAt: new Date().toISOString() });
+      saveDb(); showToast('Message posted.'); renderGroups();
+    }
+
+    function needLogin() { return `<div class="empty">Please sign up or log in to access this area.<br><br><button class="btn primary" onclick="route('auth')">Sign up / Log in</button></div>`; }
+
+    function resetDemoData() {
+      if (!confirm('Reset all demo data in this browser?')) return;
+      db = structuredClone(seedData); saveDb(); showToast('Demo data reset.'); route('home');
+    }
+
+    render();
+  </script>
+</body>
+</html>
