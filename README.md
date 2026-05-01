@@ -4,7 +4,44 @@
 
 MedStartup Exchange is an early MVP concept for a collaboration platform where healthcare professionals can share real-world problems, and startups, builders, students, mentors, researchers, and community supporters can discover validated healthcare needs and form working groups around them.
 
-This project is intended as a **public-good, non-commercial collaboration space**. It is designed to complement existing startup, innovation, digital health, incubator, and government ecosystem platforms.
+This project is intended as a **public-good, non-commercial collaboration space**. It is designed to complement existing startup, innovation, digital health, incubator, government, academic, and research ecosystem platforms.
+
+---
+
+## How this differs from government and research bodies
+
+MedStartup Exchange is **not** a medical research institute, regulatory body, funding agency, government program, or healthcare service provider.
+
+It is intended to be an **early-stage problem-discovery and collaboration layer**.
+
+Institutions such as ICMR, NBRC, government research bodies, universities, incubators, hospitals, and digital health programs play important roles in formal research, policy, funding, infrastructure, innovation programs, and institutional partnerships.
+
+MedStartup Exchange aims to complement these efforts by helping surface and organize real-world healthcare problems earlier in the journey.
+
+### Government and research bodies often focus on:
+
+- Formal biomedical, clinical, or public health research
+- Research grants and funded programs
+- Policy and evidence generation
+- Institutional research collaborations
+- Domain-specific research infrastructure
+- National or regional health priorities
+- Regulatory, standards, or ecosystem-level programs
+
+### MedStartup Exchange focuses on:
+
+- Helping healthcare professionals describe practical problems from the field
+- Turning observations into structured problem statements
+- Connecting problem owners with startups, students, builders, mentors, and researchers
+- Forming working groups around specific needs
+- Helping ideas move toward prototypes, pilots, research questions, or institutional collaborations
+- Creating a community-supported bridge between healthcare needs and people willing to help solve them
+
+In simple terms:
+
+> Government and research bodies often support formal research, policy, funding, or institutional programs. MedStartup Exchange focuses on early-stage problem discovery, community collaboration, and connecting healthcare problem owners with builders.
+
+This initiative is designed to **complement, not replace or compete with**, existing government, academic, research, startup, innovation, and digital health ecosystem platforms.
 
 ---
 
