@@ -73,6 +73,7 @@ The current MVP is a simple static prototype that demonstrates the core idea.
 - User sign-up with role selection: healthcare or startup
 - Profile page
 - Healthcare users can post structured problem statements
+- Future mobile app concept where healthcare users can record voice problem statements that are transcribed, structured, captured, and sent through the same moderation workflow before publication
 - Admin can approve problem posts
 - Startups can browse, search, and filter problems
 - Startups can click “Interested in collaborating”
@@ -99,6 +100,71 @@ Users should **not** post:
 - Medical advice, diagnosis, or treatment recommendations
 
 This project does not provide medical advice, clinical recommendations, diagnosis, treatment, or regulated healthcare services.
+
+
+---
+
+## Submission moderation and review
+
+All healthcare problem submissions should be reviewed before being published.
+
+The moderation process may include both automated AI-assisted checks and human/admin review to help ensure that posts:
+
+- Describe a genuine healthcare problem statement rather than a personal complaint, allegation, review, or dispute
+- Do not contain patient-identifiable information, protected health information, or private medical details
+- Do not include personal contact details or private information about individuals
+- Do not unnecessarily identify hospitals, clinics, institutions, departments, employers, or staff members
+- Do not include company names, product names, vendor names, or commercial claims unless specifically allowed by platform policy
+- Do not contain confidential operational, institutional, commercial, legal, or procurement information
+- Do not make unsafe medical claims or provide medical advice, diagnosis, or treatment recommendations
+- Use AI-assisted checks and/or human moderation to identify original ideation and help prevent accidental intellectual-property loss for contributors or their institutions
+- Are written in a neutral, problem-focused, non-defamatory, and collaboration-oriented way
+
+Submissions that contain sensitive information may be rejected, edited, anonymized, or returned to the submitter for revision before publication.
+
+The goal of moderation is to keep the platform focused on safe, privacy-preserving healthcare problem discovery and collaboration.
+
+## Mobile app and voice-based problem capture idea
+
+A future version of MedStartup Exchange could include a mobile app designed for busy healthcare professionals who may not have time to write detailed problem statements during or after clinical or operational work.
+
+The mobile app could allow a verified healthcare user to capture a problem statement by voice, for example by describing:
+
+- What problem they observed
+- Where in the workflow the problem occurs
+- Who is affected, without naming patients, staff members, hospitals, clinics, companies, or products
+- How often the problem happens
+- What the current workaround is
+- Why the problem matters
+- What kind of help or collaboration may be useful
+
+The voice recording could be converted into text and then transformed into a structured draft problem statement. The user could review and edit the draft before submission.
+
+Voice-based submissions should go through the same safety and moderation process as written submissions. This may include:
+
+- AI-assisted transcription and summarization
+- AI-assisted detection of patient-identifiable information, private information, institution names, company names, product names, unsafe medical claims, and complaint-like or defamatory language
+- AI-assisted conversion of raw speech into a neutral, problem-focused statement
+- Human/admin review before the submission becomes visible to others
+- Redaction, anonymization, rejection, or return for revision when sensitive or inappropriate information is detected
+
+The goal of the mobile voice capture flow would be to make it easier for healthcare professionals to safely share real-world problems while preserving privacy, neutrality, and trust.
+
+Potential mobile app features could include:
+
+- Voice-to-problem-statement capture
+- Draft problem review before submission
+- Consent and privacy reminders before recording
+- “Do not include patient, institution, or company names” warning before submission
+- Automatic redaction suggestions
+- Problem category suggestions
+- Urgency, frequency, and impact tagging
+- Offline draft saving for low-connectivity settings
+- Multilingual voice capture and translation support
+- Submission status tracking, such as draft, under review, needs revision, approved, or rejected
+- Notifications when a problem is approved or when collaborators show interest
+
+---
 
 ---
 
@@ -207,6 +273,8 @@ Possible features:
 Possible features:
 
 - AI-assisted problem statement writing
+- AI-assisted voice-to-problem-statement conversion
+- AI-assisted transcription and structuring of voice submissions
 - AI summarization of problem submissions
 - AI duplicate problem detection
 - AI clustering of similar problems
@@ -225,6 +293,7 @@ Possible features:
 - AI-generated interview guide for problem validation
 - AI-assisted translation into Indian languages
 - AI moderation for patient-identifiable information
+- AI moderation for institution names, company names, product names, and other sensitive references
 - AI moderation for unsafe medical claims
 
 ---
@@ -489,6 +558,7 @@ Possible features:
 - Group chat
 - Notifications
 - Weekly digest
+- Mobile app notifications for submitted, under-review, approved, rejected, or revision-needed problem statements
 - Problem alerts
 - Startup alerts
 - Mentor alerts
@@ -624,11 +694,23 @@ Core group participation may involve:
 
 ---
 
+## Open public-good and IP position
+
+MedStartup Exchange is intended as open, non-profit, public-good ecosystem infrastructure.
+
+The general concept, workflows, and collaboration model described in this README are publicly disclosed to support open healthcare innovation and to discourage private enclosure or patenting of the core platform idea.
+
+Contributors and users should not attempt to patent, restrict, or privately appropriate the general platform model described here. User-submitted problem statements and solution ideas may have separate intellectual property considerations, and users should avoid submitting confidential or potentially patentable solution details unless they are comfortable with public disclosure.
+
+The project should maintain public dated versions of the README, roadmap, governance model, and feature descriptions through Git commits, releases, archived snapshots, or public repositories.
+
+A legal review is recommended before public launch, including review of the code license, contributor terms, content license, patent non-assertion language, and user submission terms.
+
 ## License suggestion
 
 Recommended license structure:
 
-- **Code:** MIT License
+- **Code:** GNU Affero General Public License v3.0 (AGPLv3), to help ensure that modified network-hosted versions of the platform remain open source
 - **Community content:** Creative Commons Attribution-NonCommercial 4.0 International
 - **Healthcare problem submissions:** Custom submission terms requiring no patient-identifiable information
 
